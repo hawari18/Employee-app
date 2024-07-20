@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AppContext } from '../context/AppContext';
 import { Link, useNavigate } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons'; // Icon for location
-import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons'; // Solid star icon for favorite
-import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons'; // Regular star icon for non-favorite
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 
 const EmployeeList = () => {
     const { favorites, addFavorite, employees, allEmployees, setEmployees, setSearchTerm, searchTerm } = useContext(AppContext);
     const [currentPage, setCurrentPage] = useState(1);
     const [employeesPerPage] = useState(5);
     const [filterGroup, setFilterGroup] = useState('all');
-    const [genderFilter, setGenderFilter] = useState('all'); // 'all', 'male', 'female'
+    const [genderFilter, setGenderFilter] = useState('all');
     const navigate = useNavigate();
 
     const indexOfLastEmployee = currentPage * employeesPerPage;
@@ -22,17 +22,17 @@ const EmployeeList = () => {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const filterEmployees = useCallback((searchValue, group, gender) => {
+    const filterEmployees = (searchValue, group, gender) => {
         let filteredEmployees = allEmployees;
 
         if (group !== 'all') {
             filteredEmployees = allEmployees.filter(employee => {
                 if (group === 'manager') {
-                    return employee.dob.age >= 40; // Adjust this condition based on your criteria for "Manager"
+                    return employee.dob.age >= 40;
                 } else if (group === 'worker') {
-                    return employee.dob.age >= 25 && employee.dob.age < 40; // Adjust this condition based on your criteria for "Worker"
+                    return employee.dob.age >= 25 && employee.dob.age < 40;
                 } else if (group === 'junior') {
-                    return employee.dob.age < 25; // Adjust this condition based on your criteria for "Junior"
+                    return employee.dob.age < 25;
                 }
                 return true;
             });
@@ -42,17 +42,23 @@ const EmployeeList = () => {
             filteredEmployees = filteredEmployees.filter(employee => employee.gender === gender);
         }
 
-        setEmployees(filteredEmployees);
-    }, [allEmployees, setEmployees]);
+        if (searchValue) {
+            filteredEmployees = filteredEmployees.filter(employee => 
+                `${employee.name.first} ${employee.name.last}`.toLowerCase().includes(searchValue.toLowerCase())
+            );
+        }
 
-    const debouncedSearch = useCallback(debounce((searchValue) => {
-        filterEmployees(searchValue, filterGroup, genderFilter);
-    }, 300), [filterEmployees, filterGroup, genderFilter]);
+        setEmployees(filteredEmployees);
+    };
+
+    const debouncedFilter = debounce((searchValue, group, gender) => {
+        filterEmployees(searchValue, group, gender);
+    }, 300);
 
     const handleSearchChange = (e) => {
         const { value } = e.target;
         setSearchTerm(value);
-        debouncedSearch(value);
+        debouncedFilter(value, filterGroup, genderFilter);
         setCurrentPage(1);
         navigate(`/?search=${value}`);
     };
@@ -126,7 +132,7 @@ const EmployeeList = () => {
             </div>
 
             <ul className="list-unstyled d-grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
-                {currentEmployees.map(employee => (
+                {currentEmployees.map((employee, index) => (
                     <li key={employee.login.uuid} className="card bg-white shadow rounded-lg overflow-hidden border border-primary mb-4 p-3">
                         <img src={employee.picture.large} alt={employee.name.first} className="rounded-full mb-2" />
                         <h3 className="text-xl font-bold">{employee.name.first} {employee.name.last}</h3>
@@ -139,7 +145,7 @@ const EmployeeList = () => {
                             /> {employee.location.city}, {employee.location.country}
                         </p>
                         <div className="btn-container d-flex justify-between">
-                            <Link to={`/details/${employee.login.uuid}`}>
+                            <Link to={`/employee?company=${employee.location.city}&index=${index}`}>
                                 <button className="btn btn-secondary">
                                     <i className="bi bi-info-circle"></i> More Details
                                 </button>
