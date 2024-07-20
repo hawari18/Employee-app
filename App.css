@@ -1,0 +1,90 @@
+/* Body Styling */
+body {
+    background-color: #ecf0f1;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #3498db !important;
+}
+
+.navbar-brand,
+.nav-link {
+    color: #ffffff !important;
+}
+
+.nav-link:hover {
+    color: #001eff !important;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.btn-secondary {
+    background-color: #4800ff; /* Dark Blue */
+    border-color: #4800ff;
+    color: #fff; /* White text */
+}
+
+.btn-secondary:hover {
+    background-color: #1a237e; /* Darker Blue */
+    border-color: #1a237e;
+}
+
+/* Card Styling */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 10px;
+    border: none;
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Image Styling */
+.card img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+/* Card Info Styling */
+.card .employee-info p {
+    margin: 5px 0;
+    color: #2c3e50;
+}
+
+/* Pagination Button Styling */
+.pagination button {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+}
+
+.pagination button:hover {
+    background-color: #2980b9;
+}
+
+/* Cluster Icon Styling */
+.custom-marker-cluster {
+    background-color: #3498db;
+    color: #ffffff;
+    border-radius: 50%;
+    padding: 5px;
+}
+
